@@ -207,11 +207,13 @@ summary {
 <li>Working with dates and times</li>
 <li>Creating polar plots with ggplot2</li>
 </ul>
-<p>To start, I recommend downloading <a href="https://rstudio.com/products/rstudio/download/">RStudio</a>. Open up a new .R file and start cutting and pasting! We’ll be using some basic data cleaning commands including the handy <code>lubridate</code> package, as well as <code>ggplot2</code> to create the polar plots.</p>
+<p>To start, I recommend downloading <a href="https://rstudio.com/products/rstudio/download/">RStudio</a>.</p>
+<p>The data are available in the <a href="https://github.com/smalltownbigdata/may2021-bears">Github repository</a> associated with this tutorial.</p>
+<p>Open up a new .R file and start cutting and pasting!</p>
 <hr />
 <p><strong>Data: Colorado 2020 bear reports </strong></p>
 <p>Colorado Parks and Wildlife recently started keeping detailed spatial and temporal records of wildlife complaints. So far, 2020 is the only complete year of these data, but the insights are already proving useful. Each data point includes the date and time of call, what happened and what the officer found on the scene, whether food source was involved, the sex of the animal, if it was tagged and more.</p>
-<p>The exact locations of these calls are also available, however, in the interest of privacy I’ve redacted exact home locations and addresses. While these data are technically public, it is not the interest of this blog to out the garbage-keeping practices of specific homeowners and businesses. We’re here to explore data patterns and the stories within. So instead of publishing the exact spatial data on the blog, I made an interactive map exploring the spatial patterns of bear reports using gridded heat maps I created in the R package <code>mapdeck</code>. That map is not part of this tutorial. If you’re interested in making your own mapdeck object using a different dataset, you can find a tutorial on that in <a href="https://smalltownbigdata.github.io/march2021-connectedness/march2021-connectedness.html">March’s Small Town Big Data post on Social Connectedness</a>. A heartfelt thanks to Randy Hampton at CPW for sharing these data for the purpose of this tutorial.</p>
+<p>The exact locations of these calls are also available, however, in the interest of privacy I’ve redacted exact home locations and addresses. While these data are technically public, it is not the interest of this blog to out the garbage-keeping practices of specific homeowners and businesses. We’re here to explore data patterns and the stories within. So instead of publishing the exact spatial data on the blog, <a href="https://www.smalltownbigdata.com/post/colorado-bear-data">I made an interactive map</a> exploring the spatial patterns of bear reports using gridded heat maps I created in the R package <code>mapdeck</code>. That map is not part of this tutorial. If you’re interested in making your own mapdeck object using a different dataset, you can find a tutorial on that in <a href="https://smalltownbigdata.github.io/march2021-connectedness/march2021-connectedness.html">March’s Small Town Big Data post on Social Connectedness</a>. A heartfelt thanks to Randy Hampton at CPW for sharing these data for the purpose of this tutorial.</p>
 <p><strong>Time to start cleaning.</strong></p>
 </div>
 <div id="load-in-and-check-out-the-dataset" class="section level3">
@@ -236,30 +238,29 @@ names(bears)</code></pre>
 ##  [5] &quot;GMU&quot;                     &quot;County&quot;                 
 ##  [7] &quot;District&quot;                &quot;Area&quot;                   
 ##  [9] &quot;Region&quot;                  &quot;Same.Address&quot;           
-## [11] &quot;Conflict.Address&quot;        &quot;GPS.Location&quot;           
-## [13] &quot;Incident.Header&quot;         &quot;Incident.Date&quot;          
-## [15] &quot;Incident.Time&quot;           &quot;Complaint.Type&quot;         
-## [17] &quot;Type.of.Property.Damage&quot; &quot;Service.Provided&quot;       
-## [19] &quot;Hazing.Method&quot;           &quot;Animal.Data&quot;            
-## [21] &quot;Previous.Ear.Tag.&quot;       &quot;Ear.Tag.Side&quot;           
-## [23] &quot;Ear.Tag.Color&quot;           &quot;Ear.Tag.Number&quot;         
-## [25] &quot;Previous.PIT.tag..&quot;      &quot;Previous.Collar&quot;        
-## [27] &quot;Sex&quot;                     &quot;Age&quot;                    
-## [29] &quot;Color&quot;                   &quot;Further.Response&quot;       
-## [31] &quot;Staff.Assigned&quot;          &quot;Site.Inspection.Heading&quot;
-## [33] &quot;Violation&quot;               &quot;Violation.Action&quot;       
-## [35] &quot;Citation..&quot;              &quot;Marked.Animal.Heading&quot;  
-## [37] &quot;Capture.Method&quot;          &quot;New.Ear.Tag.Color&quot;      
-## [39] &quot;New.Ear.Tag.Number&quot;      &quot;New.PIT.Tag..Dec.&quot;      
-## [41] &quot;New.Collar&quot;              &quot;Collar.Manufacturer&quot;    
-## [43] &quot;Collar.Type&quot;             &quot;Collar.Frequency&quot;       
-## [45] &quot;Collar.Code&quot;             &quot;Collar.Serial..&quot;        
-## [47] &quot;Release.Header&quot;          &quot;Release.Date&quot;           
-## [49] &quot;Release.Location&quot;        &quot;Seal..&quot;                 
-## [51] &quot;Photos.&quot;                 &quot;Photo.1&quot;                
-## [53] &quot;Photo.2&quot;                 &quot;Photo.3&quot;                
-## [55] &quot;Photo.4&quot;                 &quot;Photo.5&quot;                
-## [57] &quot;Comments&quot;                &quot;Total.Incidents&quot;</code></pre>
+## [11] &quot;Incident.Header&quot;         &quot;Incident.Date&quot;          
+## [13] &quot;Incident.Time&quot;           &quot;Complaint.Type&quot;         
+## [15] &quot;Type.of.Property.Damage&quot; &quot;Service.Provided&quot;       
+## [17] &quot;Hazing.Method&quot;           &quot;Animal.Data&quot;            
+## [19] &quot;Previous.Ear.Tag.&quot;       &quot;Ear.Tag.Side&quot;           
+## [21] &quot;Ear.Tag.Color&quot;           &quot;Ear.Tag.Number&quot;         
+## [23] &quot;Previous.PIT.tag..&quot;      &quot;Previous.Collar&quot;        
+## [25] &quot;Sex&quot;                     &quot;Age&quot;                    
+## [27] &quot;Color&quot;                   &quot;Further.Response&quot;       
+## [29] &quot;Staff.Assigned&quot;          &quot;Site.Inspection.Heading&quot;
+## [31] &quot;Violation&quot;               &quot;Violation.Action&quot;       
+## [33] &quot;Citation..&quot;              &quot;Marked.Animal.Heading&quot;  
+## [35] &quot;Capture.Method&quot;          &quot;New.Ear.Tag.Color&quot;      
+## [37] &quot;New.Ear.Tag.Number&quot;      &quot;New.PIT.Tag..Dec.&quot;      
+## [39] &quot;New.Collar&quot;              &quot;Collar.Manufacturer&quot;    
+## [41] &quot;Collar.Type&quot;             &quot;Collar.Frequency&quot;       
+## [43] &quot;Collar.Code&quot;             &quot;Collar.Serial..&quot;        
+## [45] &quot;Release.Header&quot;          &quot;Release.Date&quot;           
+## [47] &quot;Release.Location&quot;        &quot;Seal..&quot;                 
+## [49] &quot;Photos.&quot;                 &quot;Photo.1&quot;                
+## [51] &quot;Photo.2&quot;                 &quot;Photo.3&quot;                
+## [53] &quot;Photo.4&quot;                 &quot;Photo.5&quot;                
+## [55] &quot;Comments&quot;                &quot;Total.Incidents&quot;</code></pre>
 <pre class="r"><code># Since we&#39;ll want to categorize these data by the type of complaint that was made in the report, let&#39;s look at that attribute:
 unique(bears$Complaint.Type)</code></pre>
 <pre><code>##  [1] &quot;Food Source Property Damage&quot;                                                            
