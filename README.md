@@ -5,6 +5,6 @@ This repository contains the tutorial that accompanies [this blog post](https://
 
 This beginner-friendly tutorial offers some basics in working with dates in R and creating polar plots using ggplot2. You can work in any code editor or IDE, but if you're a beginner, I recommend downloading [RStudio](https://rstudio.com/products/rstudio/). 
 
-The data include the the date, time, county and type of 2020 calls to law enforcement about black bears in Coloado, derived from data kindly provided by Colorado Parks and Wildlife. Code is available in the may2021-bears.html file or at [this link](https://smalltownbigdata.github.io/may-2021-bears/may2021-bears.html). 
+The data include the the date, time, county and type of 2020 calls to law enforcement about black bears in Coloado, derived from data kindly provided by Colorado Parks and Wildlife. Code is available in the may2021-bears.html file or at [this link](https://smalltownbigdata.github.io/may2021-bears/may2021-bears.html). 
 
 For more information, visit [smalltownbigdata.com](http://www.smalltownbigdata.com).
